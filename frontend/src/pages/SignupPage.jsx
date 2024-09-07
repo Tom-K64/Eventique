@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 const Signup = () => {
   const [otpButtonText, setOtpButtonText] = useState("Send OTP");
@@ -142,7 +140,6 @@ const Signup = () => {
   };
   return (
     <>
-      <Navbar />
       {showAlert && (
         <div
         className={`alert alert-${alertType} position-fixed`}
@@ -289,7 +286,6 @@ const Signup = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

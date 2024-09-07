@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, { useState,useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import { loginContext } from "../App";
 
 const Login = () => {
+  const { auth,setAuth,isPicChanged,setIsPicChanged } = useContext(loginContext);
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState({ email: '', password: '' });
 
@@ -43,16 +43,19 @@ const Login = () => {
       );
       const data = await response.json();
       if (response.ok) {
-        newAlert("Login successfully !    x", "success");
         //Setup localstorage
-        console.log(data);
-        localStorage.setItem("first_name", data?.user?.first_name);
-        localStorage.setItem("profilepic", data?.user?.profile_pic);
+        localStorage.setItem("is_authenticated", 1);
         localStorage.setItem("refresh", data?.refresh);
         localStorage.setItem("access", data?.access);
-        localStorage.setItem("is_authenticated", 1);
-
+        localStorage.setItem("first_name", data?.user?.first_name);
+        if (data?.user?.profile_pic) {
+          localStorage.setItem("profilepic", data?.user?.profile_pic);
+        }
         navigate("/");
+        setAuth(!auth);
+        setIsPicChanged(!isPicChanged);
+
+        newAlert("Login successfully !    x", "success");
       } else {
         console.log(data);
         newAlert(`${data?.message}   x`, "danger");
@@ -72,7 +75,6 @@ const Login = () => {
           {alertMessage}
         </div>
       )}
-      <Navbar />
       <div className="container mt-5">
         <div className="row justify-content-center">
           <div className="col-md-6">
@@ -126,7 +128,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

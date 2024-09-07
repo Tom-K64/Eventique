@@ -1,7 +1,9 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect,useContext } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
+import { loginContext } from "../App";
 
-const Navbar = () => {
+const Navbar = ({isPicChanged}) => {
+  const { isLoggedIn,setIsLoggedIn,auth,setAuth } = useContext(loginContext);
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("User");
@@ -16,22 +18,18 @@ const Navbar = () => {
 
   const handleSignout = () => {
     localStorage.clear();
-    setShowMenu(false)
+    setIsLoggedIn(false);
     navigate("/");
-    setPageRef(!pageRef);
+    closeMenu();
   }
   useEffect(()=>{
-  if (localStorage.getItem('is_authenticated')){
-    setIsAuthenticated(true);
+  if (isLoggedIn){
     setUserName(localStorage.getItem('first_name'));
-    if (!localStorage.getItem('profilepic')){
-      setUserProfile(localStorage.getItem('profilepic'));
+    if (localStorage.getItem('profilepic')){
+      setUserProfile(`${import.meta.env.VITE_BASE_URL}${localStorage.getItem('profilepic')}`);
     }
-    } else {
-    setIsAuthenticated(false);
-  
   }
-  },[pageRef]);
+  },[isPicChanged]);
   return (
     <>
       {/* Navbar */}
@@ -57,7 +55,7 @@ const Navbar = () => {
 
         {/* Right Side: Conditional rendering based on authentication */}
         <div className="d-flex align-items-center">
-          {isAuthenticated ? (
+          {isLoggedIn ? (
             <>
               {/* Profile image and user's name */}
               <Link to="/profile" className="d-flex align-items-center btn">
