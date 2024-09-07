@@ -83,3 +83,18 @@ class WebsiteUserLoginAPIView(views.APIView):
         except Exception as e:
             return Response({"message" : f"Something went wrong: {e}"}, status=status.HTTP_400_BAD_REQUEST)
         
+class WebsiteChangePasswordAPIView(views.APIView):
+    permission_classes=[permissions.IsAuthenticated]
+
+    def put(self,request):
+        try:
+            user=request.user
+            user_instance = authenticate(request,username=user.email,password=request.data['password'])
+            if user_instance:
+                user_instance.set_password(request.data['new_password'])
+                user_instance.save()
+                return Response({"message":"Password changed successfully"},status=status.HTTP_200_OK)
+            else:
+                return Response({"message" : "Invalid Old Password"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"message" : f"Something went wrong: {e}"}, status=status.HTTP_400_BAD_REQUEST)

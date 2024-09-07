@@ -9,7 +9,7 @@ class UserModelUtilsSerializer(serializers.ModelSerializer):
     
     def get_profile_pic(self,obj):
         try:
-            data = obj.UserProfileModel_user.profile_pic.media
+            data = obj.UserProfileModel_user.profile_pic
         except:
             data=None
         return data

@@ -18,7 +18,6 @@ class WebsiteEmailOtpVerifyModelCreateSerializer(serializers.ModelSerializer):
         return data
 
     def create(self,validated_data):
-        print(validated_data)
         validated_data['email'] = normalize_email(validated_data['email'])
         EmailOtpVerifyModel.objects.filter(email=validated_data['email']).delete()
         validated_data['otp'] = generate_otp()

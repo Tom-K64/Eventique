@@ -14,7 +14,6 @@ def send_email(subject,message,recipient_list):
 
 def send_email_otp(otp,recipient):
     try:
-        print("Sending email to",recipient)
         from_email = settings.EMAIL_HOST_USER
         subject = "Verification for Eventique"
         message="""
@@ -25,10 +24,8 @@ def send_email_otp(otp,recipient):
         Eventique
         """.format(otp)
         send_mail(subject, message, from_email, [recipient])
-        print("Email sent")
         return True
     except Exception as e:
-        print(e)
         return False
 
 def generate_otp():
