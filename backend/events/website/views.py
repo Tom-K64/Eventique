@@ -2,8 +2,8 @@ from rest_framework import generics,status,permissions,filters
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from ..models import EventDetailModel
-from .serializers import WebsiteEventDetailModelCreateSerializer,WebsiteEventDetailModelUpdateSerializer,WebsiteEventDetailModelListSerializer
+from ..models import EventDetailModel,EventCategoryModel
+from .serializers import WebsiteEventDetailModelCreateSerializer,WebsiteEventDetailModelUpdateSerializer,WebsiteEventDetailModelListSerializer,WebsiteEventCategoryModelListSerializer
 from ..serializers_utils import UtilsEventDetailModelSerializer
 
 
@@ -26,6 +26,19 @@ class WebsiteEventDetailModelUserEventListAPIView(generics.ListAPIView):
     def get_queryset(self):
         return self.request.user.EventDetailModel_organiser.all().order_by("-created_at")
 
+class WebsiteEventDetailModelUserEventGetAPIView(generics.GenericAPIView):
+    queryset = EventDetailModel.objects.all()
+    serializer_class=WebsiteEventDetailModelListSerializer
+    permission_classes=[permissions.IsAuthenticated]
+
+    def get(self,request,id):
+        try:
+            queryset=self.queryset.get(pk=id)
+            serializer = self.serializer_class(queryset, many=False,context={"request" : request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message" : f"Something went wrong-->{e}"}, status=status.HTTP_400_BAD_REQUEST)
+    
 class WebsiteEventDetailModelGetAPIView(generics.GenericAPIView):
     queryset = EventDetailModel.objects.all()
     serializer_class=UtilsEventDetailModelSerializer
@@ -90,3 +103,7 @@ class WebsiteRecipeModelGenericAPIView(generics.GenericAPIView):
                 return Response({"message" : "Not Allowed"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"message" : f"Something went wrong-->{e}"}, status=status.HTTP_400_BAD_REQUEST)
+
+class WebsiteEventCategoryModelListAPIView(generics.ListAPIView):
+    queryset = EventCategoryModel.objects.all()
+    serializer_class = WebsiteEventCategoryModelListSerializer

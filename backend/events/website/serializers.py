@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from ..models import EventDetailModel,EventMediaModel,EventTicketTypeModel
+from ..models import EventDetailModel,EventMediaModel,EventTicketTypeModel,EventCategoryModel
 
+
+class WebsiteEventCategoryModelListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventCategoryModel
+        fields = "__all__"
 class WebsiteEventTicketTypeModelListSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventTicketTypeModel
@@ -14,7 +19,7 @@ class WebsiteEventDetailModelListSerializer(serializers.ModelSerializer):
 
     def get_category(self, obj):
         try:
-            data = obj.category.title
+            data = WebsiteEventCategoryModelListSerializer(obj.category).data
         except:
             data=None
         return data
@@ -57,7 +62,7 @@ class WebsiteEventDetailModelListSerializer(serializers.ModelSerializer):
 class WebsiteEventDetailModelCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventDetailModel
-        fields = ('title','description','category','start_date','end_date','location','start_time','end_time')
+        fields = ('title','description','category','start_date','end_date','venue','location','start_time','end_time')
 
     def create(self, validated_data):
         raw_data = self.context['request'].data
@@ -92,7 +97,7 @@ class WebsiteEventDetailModelCreateSerializer(serializers.ModelSerializer):
 class WebsiteEventDetailModelUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventDetailModel
-        fields = ('title','description','category','start_date','end_date','location','start_time','end_time','is_private')
+        fields = ('title','description','category','start_date','end_date','location','venue','start_time','end_time','is_private')
 
     def validate(self, data):
         if self.context['request'].user.pk != self.instance.organiser.pk:
@@ -101,12 +106,12 @@ class WebsiteEventDetailModelUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         raw_data = self.context['request'].data
-        print(validated_data)
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
         instance.category = validated_data.get('category', instance.category)
         instance.start_date = validated_data.get('start_date', instance.start_date)
         instance.end_date = validated_data.get('end_date', instance.end_date)
+        instance.venue = validated_data.get('venue', instance.venue)
         instance.location = validated_data.get('location', instance.location)
         instance.start_time = validated_data.get('start_time', instance.start_time)
         instance.end_time = validated_data.get('end_time', instance.end_time)
