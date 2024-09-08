@@ -2,14 +2,6 @@ from django.db import models
 from django.contrib.auth import get_user_model
 # Create your models here.
 
-class EventMediaModel(models.Model):
-    media = models.URLField(null=True, blank=True)
-    media_key = models.TextField(null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
 class EventCategoryModel(models.Model):
     title = models.CharField(max_length=100,null=True,blank=True)
     description = models.TextField(null=True, blank=True)
@@ -32,10 +24,11 @@ class EventDetailModel(models.Model):
     organiser = models.ForeignKey(get_user_model(),on_delete=models.CASCADE,related_name="EventDetailModel_organiser",null=True,blank=True)
     title = models.CharField(max_length=100,null=True,blank=True)
     description = models.TextField(null=True, blank=True)
-    poster = models.ForeignKey(EventMediaModel,on_delete=models.CASCADE,related_name="EventDetailModel_poster",null=True,blank=True)
+    poster = models.TextField(null=True, blank=True)
     category = models.ForeignKey(EventCategoryModel,on_delete=models.SET_NULL,related_name="EventDetailModel_category",null=True,blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    venue = models.CharField(max_length=100,null=True, blank=True)
     location = models.CharField(max_length=100,null=True, blank=True)
     start_time = models.TimeField(null=True,blank=True)
     end_time = models.TimeField(null=True, blank=True)
@@ -43,10 +36,18 @@ class EventDetailModel(models.Model):
     ticket_types = models.ManyToManyField(EventTicketTypeModel,related_name="EventDetailModel_ticket_types",blank=True)
     price_range = models.CharField(max_length=50,blank=True,null=True)
     capacity = models.PositiveIntegerField(null=True, blank=True)
+    available = models.PositiveIntegerField(null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_private = models.BooleanField(default=True)
     
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class EventMediaModel(models.Model):
+    media = models.ImageField(upload_to="events/", blank=True, null=True)
+    event = models.ForeignKey(EventDetailModel,related_name="EventMediaModel_event",on_delete=models.CASCADE,null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 

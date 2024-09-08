@@ -20,7 +20,7 @@ class WebsiteUserProfileModelSerializer(serializers.ModelSerializer):
 class WebsiteUserProfileModelUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfileModel
-        exclude = ('user','profile_pic',)
+        exclude = ('user','profile_pic')
 
     def update(self,obj,validated_data):
         request = self.context['request']
@@ -31,7 +31,7 @@ class WebsiteUserProfileModelUpdateSerializer(serializers.ModelSerializer):
             user.last_name = request.data['last_name']
         user.save()
         if 'pic_uploaded' in request.data:
-            if request.data['pic_uploaded']:
+            if request.data['pic_uploaded']=='true':
                 image_instance,created = UserMediaGalleryModel.objects.get_or_create(user=user)
                 image_instance.media = request.FILES.get('profile_pic')
                 image_instance.save()
