@@ -23,7 +23,7 @@ const Navbar = ({isPicChanged}) => {
     closeMenu();
   }
   useEffect(()=>{
-  if (isLoggedIn){
+  if (localStorage.getItem("is_authenticated")){
     setUserName(localStorage.getItem('first_name'));
     if (localStorage.getItem('profilepic')){
       setUserProfile(`${import.meta.env.VITE_BASE_URL}${localStorage.getItem('profilepic')}`);
@@ -36,7 +36,7 @@ const Navbar = ({isPicChanged}) => {
       <nav className="navbar navbar-expand-lg navbar-light bg-light px-4 py-3" style={{ height: '80px' }}>
         {/* Logo */}
         <Link className="navbar-brand fs-4" to="/">
-          Eventique
+          <b>Eventique</b>
         </Link>
 
         {/* Center Search Bar */}

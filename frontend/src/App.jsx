@@ -8,6 +8,8 @@ import Footer from './components/Footer';
 import Profile from './pages/ProfilePage';
 import UpdateProfile from './pages/UpdateProfilePage';
 import UpdatePassword from './pages/UpdatePasswordPage';
+import EventCreation from './pages/CreateEvent';
+import UpdateEvent from './pages/UpdateEvent';
 export const loginContext = createContext();
 
 function App() {
@@ -35,7 +37,10 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/update-profile" element={<UpdateProfile/>} />
         <Route path="/update-password" element={<UpdatePassword/>} />
+        <Route path="/create-event" element={<EventCreation/>} />
+        <Route path="/update-event/:id" element={<UpdateEvent/>} />
 
+        <Route path="*" element={<HomePage />} />
       </Routes>
       <Footer />
     </loginContext.Provider>
