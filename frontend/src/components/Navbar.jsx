@@ -1,15 +1,16 @@
 import React, { useState,useEffect,useContext } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link,useLocation,useNavigate } from 'react-router-dom';
 import { loginContext } from "../App";
 
 const Navbar = ({isPicChanged}) => {
-  const { isLoggedIn,setIsLoggedIn,auth,setAuth } = useContext(loginContext);
+  const { isLoggedIn,setIsLoggedIn,isSearch, setIsSearch } = useContext(loginContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("User");
   const [pageRef, setPageRef] = useState(true);
   const [userProfile, setUserProfile] = useState("https://w7.pngwing.com/pngs/177/551/png-transparent-user-interface-design-computer-icons-default-stephen-salazar-graphy-user-interface-design-computer-wallpaper-sphere-thumbnail.png");
-
+  const [ search, setSearch] = useState('');
   // State for hamburger menu
   const [showMenu, setShowMenu] = useState(false);
 
@@ -21,6 +22,11 @@ const Navbar = ({isPicChanged}) => {
     setIsLoggedIn(false);
     navigate("/");
     closeMenu();
+  }
+  const handleSearch = () => {
+    navigate(`/events?search=${search}`);
+    setSearch('');
+    setIsSearch(!isSearch);
   }
   useEffect(()=>{
   if (localStorage.getItem("is_authenticated")){
@@ -40,18 +46,20 @@ const Navbar = ({isPicChanged}) => {
         </Link>
 
         {/* Center Search Bar */}
-        <form className="d-flex mx-auto" style={{ width: '40%' }}>
+        <div className="d-flex mx-auto" style={{ width: '40%' }}>
           <input
             className="form-control me-2"
             type="search"
             placeholder="Search events..."
+            value={search}
+            onChange={(e)=>setSearch(e.target.value)}
             aria-label="Search"
             style={{ height: '45px' }}
           />
-          <button className="btn btn-outline-success" type="submit" style={{ height: '45px' }}>
+          <button className="btn btn-outline-success" onClick={handleSearch} style={{ height: '45px' }}>
             Search
           </button>
-        </form>
+        </div>
 
         {/* Right Side: Conditional rendering based on authentication */}
         <div className="d-flex align-items-center">
@@ -90,7 +98,7 @@ const Navbar = ({isPicChanged}) => {
 
       {/* Offcanvas Menu (Hamburger Menu) */}
       {showMenu && (
-        <div className="offcanvas offcanvas-end show" style={{ visibility: 'visible', backgroundColor: '#f8f9fa' }}>
+        <div className="offcanvas offcanvas-end show" style={{ visibility: 'visible', backgroundColor: '#f8f9fa', width:'20%' }}>
           <div className="offcanvas-header">
             <h5 className="offcanvas-title">Menu</h5>
             <button type="button" className="btn-close text-reset" onClick={closeMenu}></button>

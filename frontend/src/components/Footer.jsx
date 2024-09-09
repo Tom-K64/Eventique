@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
   return (
     <>
-    <footer className="bg-light py-4 mt-5">
+    <footer className="bg-light py-4 mt-4">
       <div className="container">
         <div className="row">
           {/* Segment 1: Logo and Description */}
