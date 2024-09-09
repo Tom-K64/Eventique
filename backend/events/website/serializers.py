@@ -79,7 +79,7 @@ class WebsiteEventDetailModelCreateSerializer(serializers.ModelSerializer):
             if price_range>price:
                 price_range=price
             capacity+=quantity
-        event_instance.price_range=str(price_range)
+        event_instance.price_range=int(price_range)
         event_instance.capacity=capacity
         event_instance.available = capacity
 
@@ -130,7 +130,7 @@ class WebsiteEventDetailModelUpdateSerializer(serializers.ModelSerializer):
             if price_range>price:
                 price_range=price
             capacity+=quantity
-        instance.price_range=str(price_range)
+        instance.price_range=int(price_range)
         instance.capacity=capacity
 
         if "pic_uploaded" in raw_data:

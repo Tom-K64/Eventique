@@ -6,7 +6,7 @@ class UtilsEventDetailModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EventDetailModel
-        fields = ('title', 'description','start_date', 'start_time','venue','location','category','price_range')
+        fields = ('id','title', 'description','start_date', 'start_time','venue','location','category','price_range','poster')
     
     def get_category(self, obj):
         try:

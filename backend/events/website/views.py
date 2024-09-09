@@ -13,9 +13,17 @@ class WebsiteEventDetailModelListAPIView(generics.ListAPIView):
     filter_backends=[DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
     filterset_fields=['category',]
     search_fields=['title','category__title','venue','location']
-    ordering_fields=['created_at',]
+    ordering_fields=['created_at','title','price_range']
 
     def get_queryset(self):
+        query_params = self.request.GET
+        if 'custom' in query_params:
+            queryset = EventDetailModel.objects.all()
+            if query_params.get('start_date',None):
+                queryset= queryset.filter(start_date__lte=query_params.get('start_date'))
+            if query_params.get('price_range',None):
+                queryset= queryset.filter(price_range__lte=float(query_params.get('price_range')))
+            return queryset
         return EventDetailModel.objects.all()
     
 class WebsiteEventDetailModelUserEventListAPIView(generics.ListAPIView):

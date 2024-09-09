@@ -34,7 +34,7 @@ class EventDetailModel(models.Model):
     end_time = models.TimeField(null=True, blank=True)
 
     ticket_types = models.ManyToManyField(EventTicketTypeModel,related_name="EventDetailModel_ticket_types",blank=True)
-    price_range = models.CharField(max_length=50,blank=True,null=True)
+    price_range = models.PositiveIntegerField(max_length=50,blank=True,null=True)
     capacity = models.PositiveIntegerField(null=True, blank=True)
     available = models.PositiveIntegerField(null=True, blank=True)
 
