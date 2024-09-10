@@ -15,6 +15,7 @@ import MyEvents from './pages/MyEventsPage';
 import MyBoookings from './pages/MyBookingsPage';
 import NotFound from './components/NotFound';
 import AllEvents from './pages/AllEventsPage';
+import Checkout from './pages/TicketCheckout';
 export const loginContext = createContext();
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
         <Route path="/my-events" element={<MyEvents/>} />
         <Route path="/create-event" element={<EventCreation/>} />
         <Route path="/update-event/:id" element={<UpdateEvent/>} />
+        <Route path="/book-tickets/:id" element={<Checkout/>} />
         <Route path="/my-bookings" element={<MyBoookings/>} />
 
         <Route path="*" element={<NotFound />} />

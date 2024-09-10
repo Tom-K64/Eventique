@@ -66,36 +66,35 @@ const Signup = () => {
       if (response.ok) {
         newAlert("OTP Verified successfully !    x", "success");
         //Create Account API Call
-        try {
-          const response = await fetch(
-            `${import.meta.env.VITE_BASE_URL}/user/website/api/sign-up/`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ ...formValues }),
+        setTimeout(async()=>{
+          try {
+            const response = await fetch(
+              `${import.meta.env.VITE_BASE_URL}/user/website/api/sign-up/`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ ...formValues }),
+              }
+            );
+            const data = await response.json();
+            if (response.ok) {
+              newAlert("Account Created successfully !    x", "success");
+              setTimeout(()=>navigate("/sign-in"),1000);
+            } else {
+              newAlert(`${data.message.message}   x`, "danger");
             }
-          );
-          const data = await response.json();
-          if (response.ok) {
-            newAlert("Account Created successfully !    x", "success");
-            navigate("/sign-in");
-          } else {
-            console.log(data);
-            newAlert(`${data.message.message}   x`, "danger");
+          } catch (e) {
+            newAlert(`${e.message}   x`, "danger");
           }
-        } catch (e) {
-          console.error(e);
-        }
+        },1000);
       } else {
-        console.log(data);
         newAlert(`${data.message.message}   x`, "danger");
       }
     } catch (e) {
-      console.error(e);
+      newAlert(`${e.message}   x`, "danger");
     }
-    // console.log(formValues);
 
   };
   const handleSendOtp = async () => {
@@ -118,12 +117,11 @@ const Signup = () => {
         setTimer(30);
         newAlert("Otp sent successfully !    x", "success");
       } else {
-        console.log(data);
         setOtpButtonDisabled(false);
         newAlert(`${data.message.message}   x`, "danger");
       }
     } catch (e) {
-      console.error(e);
+      newAlert(`${e.message}   x`, "danger");
     }
     
     const countdown = setInterval(() => {

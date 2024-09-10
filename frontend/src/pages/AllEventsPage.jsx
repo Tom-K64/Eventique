@@ -67,13 +67,11 @@ const AllEvents = () => {
     };
 
     const handleFilters = () => {
-        console.log(filters);
         let filter = "?custom=1";
         if (filters.category !== "all") { filter += `&category=${filters.category}`; }
         if (filters.price !== '0' && filter.price !== '9999') { filter += `&price_range=${(String(filters.price))}`; }
         if (filters.date !== "") { filter += `&start_date=${filters.date}`; }
         if (filters.sort_by !== "all") { filter += `&ordering=${filters.sort_by}`; }
-        console.log(filter);
         getEvents(`${import.meta.env.VITE_BASE_URL}/events/website/api/event-list-api/${filter}`);
     };
 

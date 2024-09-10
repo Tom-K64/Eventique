@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { loginContext } from '../App';
 
 const UpdateEvent = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     const { isLoggedIn, setIsLoggedIn } = useContext(loginContext);
     const [category, setCategory] = useState([]);

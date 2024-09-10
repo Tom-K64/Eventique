@@ -34,7 +34,7 @@ const UpdateProfile = () => {
                     setFormData({
                         first_name: data.user.first_name,
                         last_name: data.user.last_name,
-                        profile_pic: `${import.meta.env.VITE_BASE_URL}${data?.profile_pic}`,
+                        profile_pic: data?.profile_pic?`${import.meta.env.VITE_BASE_URL}${data?.profile_pic}`:null,
                         bio: data.bio,
                         dob: data.dob,
                         location: data.location,
@@ -146,7 +146,7 @@ const UpdateProfile = () => {
                     {/* Profile Picture */}
                     <label htmlFor="profileImage">
                         <img
-                            src={selectedImage || formData.profile_pic}
+                            src={selectedImage || (formData?.profile_pic ? `${formData?.profile_pic}`:"https://w7.pngwing.com/pngs/177/551/png-transparent-user-interface-design-computer-icons-default-stephen-salazar-graphy-user-interface-design-computer-wallpaper-sphere-thumbnail.png")}
                             alt="Profile"
                             className="rounded-circle img-fluid mb-3"
                             style={{ width: '150px', height: '150px', cursor: 'pointer', border: '2px solid #ddd' }}
@@ -169,7 +169,7 @@ const UpdateProfile = () => {
                                 type="text"
                                 className="form-control"
                                 name="first_name"
-                                value={formData.first_name}
+                                value={formData?.first_name}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -180,7 +180,7 @@ const UpdateProfile = () => {
                                 type="text"
                                 className="form-control"
                                 name="last_name"
-                                value={formData.last_name}
+                                value={formData?.last_name}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -189,7 +189,7 @@ const UpdateProfile = () => {
                             <select
                                 className="form-select"
                                 name="gender"
-                                value={formData.gender}
+                                value={formData?.gender}
                                 onChange={handleInputChange}
                             >
                                 <option value="Male">Male</option>
@@ -214,7 +214,7 @@ const UpdateProfile = () => {
                                 type="text"
                                 className="form-control"
                                 name="bio"
-                                value={formData.bio}
+                                value={formData?.bio}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -224,7 +224,7 @@ const UpdateProfile = () => {
                                 type="text"
                                 className="form-control"
                                 name="location"
-                                value={formData.location}
+                                value={formData?.location}
                                 onChange={handleInputChange}
                             />
                         </div>

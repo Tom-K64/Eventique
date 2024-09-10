@@ -1,25 +1,83 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const MyEventCard = ({ event }) => {
+const MyEventCard = ({ event,change,setChange }) => {
+    const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
-    const [discussionOn, setDiscussionOn] = useState(false);
-    const [qaOn, setQaOn] = useState(false);
-    const [privateOn, setPrivateOn] = useState(false);
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
 
-    const handleToggle = (toggleState, setToggleState) => {
-        setToggleState(!toggleState);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("success");
+    const newAlert = (msg, type) => {
+        setAlertType(type);
+        setAlertMessage(msg);
+        setShowAlert(true);
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 3000);
     };
 
+    function formatDate(dateInput) {
+        const dateObj = new Date(dateInput);
+        return dateObj.toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short',year:'numeric'});
+      }
+      function formatTime(timeInput) {
+        const [hours, minutes] = timeInput.split(':');
+        const date = new Date();
+        date.setHours(hours, minutes);
+        return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      }
+    const handlePrivacyUpdate = async() => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_BASE_URL}/events/website/api/event-privacy-update-api/${event.id}/`,
+                {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access")}`,
+                        "Content-Type": "application/json",
+                    },
+                    // body: JSON.stringify({ }),
+                }
+            );
+            const data = await response.json();
+            if (response.ok) {
+                newAlert("Privacy status Changed successfully !    x", "success");
+                setChange(!change);
+            } else {
+                newAlert(`${data?.message}   x`, "danger");
+            }
+        } catch (e) {
+            newAlert(`${e.message}`, "warning");
+        }
+    }
+
+    const handleUpdate = () =>{
+        if(event.capacity!=event.available){
+            newAlert("Some Tickets have been booked, Contact Admin to Update !!!","warning");
+        }else{
+            navigate(`/update-event/${event.id}`);
+        }
+    }
     return (
         <div className="card mb-3">
+            {showAlert && (
+                <div
+                    className={`alert alert-${alertType} position-fixed`}
+                    style={{ top: "100px", right: "20px", width: "auto", zIndex: "100" }}
+                    role="alert"
+                >
+                    {alertMessage}
+                </div>
+            )}
             <div className="row no-gutters">
                 {/* Left side with poster */}
                 <div className="col-md-3">
-                    <img src={event.poster} className="card-img p-3" style={{ borderRadius: "10%", maxHeight: "200px" }} alt="Event Poster" />
+                    <img src={event?.poster ? `${import.meta.env.VITE_BASE_URL}${event.poster}`:"https://via.placeholder.com/150"} className="card-img p-3" style={{ borderRadius: "10%", maxHeight: "200px" }} alt="Event Poster" />
                 </div>
 
                 {/* Right side with event details */}
@@ -27,19 +85,19 @@ const MyEventCard = ({ event }) => {
                 <div className="col-md-4">
                     <div className="card-body">
                         <h5 className="card-title">{event.title}</h5>
-                        <p className="card-text mb-0">Category : {event.totalTickets}</p>
-                        <p className="card-text mb-0">Venue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {event.totalTickets}</p>
-                        <p className="card-text mb-0">Location&nbsp; : {event.totalTickets}</p>
-                        <p className="card-text mb-0">Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {event.totalTickets}</p>
-                        <p className="card-text mb-0">Time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {event.totalTickets}</p>
+                        <p className="card-text mb-0">Category : {event.category.title}</p>
+                        <p className="card-text mb-0">Venue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {event.venue}</p>
+                        <p className="card-text mb-0">Location&nbsp; : {event.location}</p>
+                        <p className="card-text mb-0">Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {formatDate(event.start_date)}</p>
+                        <p className="card-text mb-0">Time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {formatTime(event.start_time)}</p>
                     </div>
                 </div>
                 <div className="col-md-3 ">
                     <div className="card-body">
-                        <p className="card-text mt-4 mb-0">Privacy&nbsp;&nbsp;&nbsp; : Private</p>
-                        <p className="card-text mb-0">Capacity&nbsp; : 100</p>
-                        <p className="card-text">Available&nbsp; : 50</p>
-                        <p className="card-text mb-0 text-muted">List of Attendees</p>
+                        <p className="card-text mt-4 mb-0">Privacy&nbsp;&nbsp;&nbsp; : {event.is_private ? "Private":"Public"}</p>
+                        <p className="card-text mb-0">Capacity&nbsp; : {event.capacity}</p>
+                        <p className="card-text mb-4">Available&nbsp; : {event.available}</p>
+                        <button className=" btn  btn-outline-primary" onClick={()=>navigate(`/event/${event.id}`)} >Go to Organiser Controls</button>
                     </div>
                 </div>
                 {/* Three-dot overflow menu */}
@@ -53,15 +111,15 @@ const MyEventCard = ({ event }) => {
 
                         {menuOpen && (
                             <div className="dropdown-menu show">
-                                <a className="dropdown-item" href="#">
-                                    Make Private
-                                </a>
-                                <a className="dropdown-item" href="#">
+                                <button className="dropdown-item" onClick={handlePrivacyUpdate}>
+                                    Make {event.is_private ? "Public":"Private"}
+                                </button>
+                                <button className="dropdown-item" onClick={handleUpdate}>
                                     Update Event
-                                </a>
-                                <a className="dropdown-item text-danger" href="#">
+                                </button>
+                                <button className="dropdown-item text-danger">
                                     Delete Event
-                                </a>
+                                </button>
                             </div>
                         )}
                     </div>

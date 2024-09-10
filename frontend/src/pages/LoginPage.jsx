@@ -57,11 +57,10 @@ const Login = () => {
 
         newAlert("Login successfully !    x", "success");
       } else {
-        console.log(data);
         newAlert(`${data?.message}   x`, "danger");
       }
     } catch (e) {
-      console.error(e);
+      newAlert(`${e?.message}   x`, "danger");
     }
   }
   return (

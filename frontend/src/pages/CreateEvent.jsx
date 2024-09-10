@@ -1,7 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { loginContext } from '../App';
+import { useNavigate } from 'react-router-dom';
 
 const EventCreation = () => {
+    const navigate = useNavigate();
     const { isLoggedIn, setIsLoggedIn } = useContext(loginContext);
     const [ticketTypes, setTicketTypes] = useState([{ title: '', description: '', price: '', quantity: '' }]);
     const [category, setCategory] = useState([]);
@@ -52,11 +54,6 @@ const EventCreation = () => {
             });
         });
         formData.append('type_count', ticketTypes.length);
-
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-          }
-
           try {
             const response = await fetch(
                 `${import.meta.env.VITE_BASE_URL}/events/website/api/create-event/`,

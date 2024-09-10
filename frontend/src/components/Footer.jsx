@@ -18,9 +18,9 @@ const Footer = () => {
             <h5>Quick Links</h5>
             <ul className="list-unstyled">
               <li><Link to="/">Home</Link></li>
-              <li><Link to="/profile">Profile</Link></li>
-              <li><Link to="/my-events">Events</Link></li>
-              <li><Link to="/my-bookings">Bookings</Link></li>
+              <li><Link to="/profile">My Profile</Link></li>
+              <li><Link to="/my-events">My Events</Link></li>
+              <li><Link to="/my-bookings">My Bookings</Link></li>
             </ul>
           </div>
           {/* Segment 3: Newsletter Signup */}

@@ -1,9 +1,34 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { loginContext } from '../App';
 
 const EventDetails = () => {
     const { id } = useParams();
-    const [event, setEvent] = useState({});
+    const {isLoggedIn} = useContext(loginContext);
+    const navigate = useNavigate();
+    const [event, setEvent] = useState(
+      {
+        "id": 6,
+        "title": "Dummy Title",
+        "description": "Dummy Event Description",
+        "start_date": "2024-09-12",
+        "start_time": "13:30",
+        "venue": "Dummy Venue",
+        "location": "Dummy Location",
+        "category": "Dummy Category",
+        "price_range": 999,
+        "poster": null,
+        "capacity": 25,
+        "available": 25
+    }
+    );
+    const handleBook = ()=>{
+      if (isLoggedIn){
+        navigate(`/book-tickets/${event.id}`);
+      }else{
+        newAlert("Please Login to Book Tickets", "warning");
+      }
+    }
 
     const getEvent = async () => {
         try {
@@ -69,7 +94,7 @@ const EventDetails = () => {
                                 <p className="card-text"><small className="text-muted">{event?.category}</small></p>
                                     </div>
                                     <div className="col-md-2 d-flex justify-content-center align-items-center">
-                                        <button type="button" className="btn btn-danger p-3 fs-5">Book Now</button>
+                                        <button type="button" disabled={Boolean(!event?.available)} className="btn btn-danger p-3 fs-5" onClick={handleBook}>{event?.available!=0?"Book Now":"Sold Out" }</button>
                                     </div>
                                 </div>
                                 <hr/>
