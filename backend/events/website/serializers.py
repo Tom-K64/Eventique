@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from ..models import EventDetailModel,EventMediaModel,EventTicketTypeModel,EventCategoryModel
-
+from ..models import EventDetailModel,EventMediaModel,EventTicketTypeModel,EventCategoryModel,EventAttendeeModel,EventTicketModel
+from ..serializers_utils import UtilsEventDetailModelSerializer
 
 class WebsiteEventCategoryModelListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -101,7 +101,9 @@ class WebsiteEventDetailModelUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if self.context['request'].user.pk != self.instance.organiser.pk:
-            raise serializers.ValidationError({'message':'You are not authorized to update this event'})
+            raise serializers.ValidationError('You are not authorized to update this event')
+        if self.instance.capacity != self.instance.available:
+            raise serializers.ValidationError("Some tickets are already booked, Contact Admin to Update !!!")
         return data
 
     def update(self, instance, validated_data):
@@ -132,6 +134,7 @@ class WebsiteEventDetailModelUpdateSerializer(serializers.ModelSerializer):
             capacity+=quantity
         instance.price_range=int(price_range)
         instance.capacity=capacity
+        instance.available = capacity
 
         if "pic_uploaded" in raw_data:
             if raw_data["pic_uploaded"]=="true":
@@ -142,3 +145,47 @@ class WebsiteEventDetailModelUpdateSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class WebsiteEventAttendeeModelCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventAttendeeModel
+        fields = ('event',)
+
+    def validate(self, data):
+        if 'tickets' not in self.context['request'].data or len(self.context['request'].data.get('tickets'))==0:
+            raise serializers.ValidationError('No Tickets Selected')
+        return data
+
+    def create(self, validated_data):
+        request = self.context['request']
+        event_instance = validated_data['event']
+        attendee_instance = EventAttendeeModel.objects.create(user=request.user,event=event_instance)
+        total_tickets,total_price = 0,0
+        for ticket in request.data.get('tickets'):
+            ticket_type_instance = EventTicketTypeModel.objects.get(id=ticket['id'])
+            ticket_instance = EventTicketModel.objects.create(event=event_instance,ticket_type=ticket_type_instance,quantity=int(ticket['quantity']),total_price=int(ticket['quantity'])*ticket_type_instance.price)
+            ticket_type_instance.quantity = ticket_type_instance.quantity-int(ticket['quantity'])
+            ticket_type_instance.save()
+            total_tickets+=ticket_instance.quantity
+            total_price+=ticket_instance.total_price
+            attendee_instance.tickets.add(ticket_instance)
+        attendee_instance.total_ticket_count = total_tickets
+        attendee_instance.total_price_paid=total_price
+        attendee_instance.save()
+        event_instance.available= event_instance.available - total_tickets
+        event_instance.save()
+        return validated_data
+    
+class WebsiteEventAttendeeModelListSerializer(serializers.ModelSerializer):
+    event = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = EventAttendeeModel
+        fields = ('event','total_ticket_count','total_price_paid')
+    
+    def get_event(self, obj):
+        try:
+            data = UtilsEventDetailModelSerializer(obj.event,many=False).data
+        except:
+            data=None
+        return data
