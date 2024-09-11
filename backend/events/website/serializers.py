@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ..models import EventDetailModel,EventMediaModel,EventTicketTypeModel,EventCategoryModel,EventAttendeeModel,EventTicketModel
 from ..serializers_utils import UtilsEventDetailModelSerializer
-
+from user.serializers_utils import UserModelUtilsSerializer
 class WebsiteEventCategoryModelListSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventCategoryModel
@@ -177,7 +177,7 @@ class WebsiteEventAttendeeModelCreateSerializer(serializers.ModelSerializer):
         event_instance.save()
         return validated_data
     
-class WebsiteEventAttendeeModelListSerializer(serializers.ModelSerializer):
+class WebsiteEventAttendeeModelUserTicketListSerializer(serializers.ModelSerializer):
     event = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = EventAttendeeModel
@@ -186,6 +186,20 @@ class WebsiteEventAttendeeModelListSerializer(serializers.ModelSerializer):
     def get_event(self, obj):
         try:
             data = UtilsEventDetailModelSerializer(obj.event,many=False).data
+        except:
+            data=None
+        return data
+    
+class WebsiteEventAttendeeModelEventAttendeeListSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EventAttendeeModel
+        fields = ('id','user','total_ticket_count','total_price_paid')
+    
+    def get_user(self, obj):
+        try:
+            data = UserModelUtilsSerializer(obj.user,many=False).data
         except:
             data=None
         return data

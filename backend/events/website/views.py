@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import EventDetailModel,EventCategoryModel,EventAttendeeModel
-from .serializers import WebsiteEventDetailModelCreateSerializer,WebsiteEventDetailModelUpdateSerializer,WebsiteEventDetailModelListSerializer,WebsiteEventCategoryModelListSerializer,WebsiteEventAttendeeModelCreateSerializer,WebsiteEventAttendeeModelListSerializer
+from .serializers import WebsiteEventDetailModelCreateSerializer,WebsiteEventDetailModelUpdateSerializer,WebsiteEventDetailModelListSerializer,WebsiteEventCategoryModelListSerializer,WebsiteEventAttendeeModelCreateSerializer,WebsiteEventAttendeeModelUserTicketListSerializer,WebsiteEventAttendeeModelEventAttendeeListSerializer
 from ..serializers_utils import UtilsEventDetailModelSerializer
 
 
@@ -76,7 +76,7 @@ class WebsiteEventDetailModelCreateAPIView(generics.CreateAPIView):
             return Response({"message" : f"something went wrong, {e}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class WebsiteRecipeModelGenericAPIView(generics.GenericAPIView):
+class WebsiteEventDetailModelGenericAPIView(generics.GenericAPIView):
     queryset = EventDetailModel.objects.all()
     serializer_class=WebsiteEventDetailModelUpdateSerializer
     permission_classes=[permissions.IsAuthenticated]
@@ -153,11 +153,24 @@ class WebsiteEventAttendeeModelCreateAPIView(generics.CreateAPIView):
             return Response({"message" : f"something went wrong, {e}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class WebsiteEventAttendeeModelListAPIView(generics.ListAPIView):
-    serializer_class = WebsiteEventAttendeeModelListSerializer
+class WebsiteEventAttendeeModelUserTicketListAPIView(generics.ListAPIView):
+    serializer_class = WebsiteEventAttendeeModelUserTicketListSerializer
     permission_classes=[permissions.IsAuthenticated]
 
 
     def get_queryset(self):
         return self.request.user.EventAttendeeModel_user.all().order_by('-created_at')
     
+class WebsiteEventAttendeeModelEventAttendeeListAPIView(generics.GenericAPIView):
+    queryset = EventAttendeeModel.objects.all()
+    serializer_class=WebsiteEventAttendeeModelEventAttendeeListSerializer
+    permission_classes=[permissions.IsAuthenticated]
+
+    def get(self,request,id):
+        try:
+            event = EventDetailModel.objects.get(id=id)
+            queryset=event.EventAttendeeModel_event.all().order_by('-created_at')
+            serializer = self.serializer_class(queryset, many=True,context={"request" : request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message" : f"Something went wrong-->{e}"}, status=status.HTTP_400_BAD_REQUEST)

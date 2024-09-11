@@ -25,6 +25,7 @@ urlpatterns = [
     path('userprofile/',include("userprofile.urls")),
     path('events/',include("events.urls")),
     path('activities/',include("activities.urls")),
+    path('notifications/',include("notifications.urls")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'userprofile',
     'events',
     'activities',
+    'notifications',
 ]
 
 AUTH_USER_MODEL = "user.UserModel"
