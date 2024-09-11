@@ -81,13 +81,61 @@ const MyEventCard = ({ event, change, setChange }) => {
     // Activites
     const [showNotificationModal, setShowNotificationModal] = useState(false);
     const [showAttendeeListModal, setShowAttendeeListModal] = useState(false);
-    const [showQnA, setShowQnA] = useState(false);
-    const [showDiscussions, setShowDiscussions] = useState(false);
-    const [showPoll, setShowPoll] = useState(false);
+    const [showPollModal, setShowPollModal] = useState(false);
+    const [showQnA, setShowQnA] = useState(event.qna_is_active);
+    const [showDiscussions, setShowDiscussions] = useState(event.forum_is_active);
+    const [showPoll, setShowPoll] = useState(event.poll_is_active);
     const [sendNotificationBtn, setSendNotificationBtn] = useState(false);
+    const [pollBtn, setPollBtn] = useState(false);
     const [attendees, setAttendees] = useState([]);
     const [ticketSales, setTicketSales] = useState({ ticket: 0, revenue: 0 });
     const [notification, setNotification] = useState({ title: '', message: '' });
+    const [poll, setPoll] = useState({ question: '', options: ['', ''], });
+
+    const handleQuestionChange = (e) => {
+        setPoll({ ...poll, question: e.target.value });
+    };
+
+    const handleOptionChange = (index, value) => {
+        const updatedOptions = [...poll.options];
+        updatedOptions[index] = value;
+        setPoll({ ...poll, options: updatedOptions });
+    };
+
+    const addOption = () => {
+        setPoll({ ...poll, options: [...poll.options, ''] });
+    };
+
+
+    const handleCreatePoll = async(e) => {
+        e.preventDefault();
+        console.log(poll);
+        setPollBtn(true);
+        newAlert("Poll is being Created !!!","info");
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/activities/website/api/event-poll-create-api/`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("access")}`,
+                    },
+                    body: JSON.stringify({ event: event.id, ...poll }),
+                }
+            );
+            const data = await response.json();
+            if (response.ok) {
+                newAlert("Poll created successful", "success");
+                setPoll({ question: '', options: ['', ''], });
+            } else {
+                newAlert("Unable to Create Poll, Try again later !!!", "warning");
+            }
+        } catch (err) {
+            newAlert(err.message, "danger");
+        };
+        setShowPollModal(false);
+        setPollBtn(false);
+    };
 
     const handleNotificationBtn = () => {
         if (event.capacity === event.available) {
@@ -171,6 +219,44 @@ const MyEventCard = ({ event, change, setChange }) => {
         setSendNotificationBtn(false);
     }
 
+    const handleQA = () => {
+        handleActivityChange({ qna_is_active: !showQnA })
+    }
+
+    const handleDiscussion = () => {
+        handleActivityChange({ forum_is_active: !showDiscussions })
+    }
+
+    const handlePoll = () => {
+        handleActivityChange({ poll_is_active: !showPoll })
+    }
+
+    const handleActivityChange = async (changeData) => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_BASE_URL}/events/website/api/event-activity-update-api/${event.id}/`,
+                {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access")}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(changeData),
+                }
+            );
+            const data = await response.json();
+            if (response.ok) {
+                setShowQnA(data.qna_is_active);
+                setShowDiscussions(data.forum_is_active);
+                setShowPoll(data.poll_is_active);
+                newAlert("Status Changed successfully !!!", "success");
+            } else {
+                newAlert(`${data?.message}   x`, "danger");
+            }
+        } catch (e) {
+            newAlert(`${e.message}`, "warning");
+        }
+    }
 
     return (
         <>
@@ -207,7 +293,7 @@ const MyEventCard = ({ event, change, setChange }) => {
                             <p className="card-text mt-4 mb-0">Privacy&nbsp;&nbsp;&nbsp; : {event.is_private ? "Private" : "Public"}</p>
                             <p className="card-text mb-0">Capacity&nbsp; : {event.capacity}</p>
                             <p className="card-text mb-4">Available&nbsp; : {event.available}</p>
-                            <button className=" btn  btn-outline-primary" onClick={handleAttendee} >List of Attendees</button>
+                            <button className=" btn  btn-outline-secondary" onClick={() => navigate(`/event/${event.id}`)} >Go to Event Page&nbsp; <i className="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </div>
                     </div>
                     {/* Three-dot overflow menu */}
@@ -246,7 +332,8 @@ const MyEventCard = ({ event, change, setChange }) => {
                                     type="checkbox"
                                     role="switch"
                                     id="toggleQnA"
-                                    onChange={() => setShowQnA(!showQnA)}
+                                    checked={showQnA}
+                                    onChange={handleQA}
                                 />
                             </div>
                         </div>
@@ -258,7 +345,8 @@ const MyEventCard = ({ event, change, setChange }) => {
                                     type="checkbox"
                                     role="switch"
                                     id="toggleDiscussions"
-                                    onChange={() => setShowDiscussions(!showDiscussions)}
+                                    checked={showDiscussions}
+                                    onChange={handleDiscussion}
                                 />
                             </div>
                         </div>
@@ -270,17 +358,19 @@ const MyEventCard = ({ event, change, setChange }) => {
                                     type="checkbox"
                                     role="switch"
                                     id="togglePrivacy"
-                                    onChange={() => setShowPoll(!showPoll)}
+                                    checked={showPoll}
+                                    onChange={handlePoll}
                                 />
                             </div>
                         </div>
-                        <button className="btn btn-outline-info" onClick={handleNotificationBtn}>
-                            Send Notification
-                        </button>
-                        {showPoll && <button className="btn btn-outline-info" disabled={sendNotificationBtn} onClick={() => setShowNotificationModal(true)}>
+                        {showPoll && <button className="btn btn-outline-info" disabled={pollBtn} onClick={() => setShowPollModal(true)}>
                             Create Poll
                         </button>
                         }
+                        <button className=" btn  btn-outline-info" onClick={handleAttendee} >List of Attendees</button>
+                        <button className="btn btn-outline-info" onClick={handleNotificationBtn}>
+                            Send Notification
+                        </button>
 
                     </div>
                 </div>
@@ -316,6 +406,61 @@ const MyEventCard = ({ event, change, setChange }) => {
                                     <button type="submit" disabled={sendNotificationBtn} className="btn btn-primary">
                                         Send Notification
                                     </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create Poll Modal */}
+            {showPollModal && (
+                <div className="modal show" tabIndex="-1" style={{ display: 'block' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Create Poll for "{event.title}"</h5>
+                                <button type="button" className="btn-close" onClick={() => setShowPollModal(false)}></button>
+                            </div>
+                            <form onSubmit={handleCreatePoll}>
+                                <div className="modal-body">
+                                <div className="mb-3">
+                                    <label htmlFor="pollQuestion" className="form-label">Poll Question</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="pollQuestion"
+                                        placeholder="Enter your poll question"
+                                        value={poll.question}
+                                        onChange={handleQuestionChange}
+                                        required
+                                    />
+                                </div>
+
+                                {poll.options.map((option, index) => (
+                                    <div className="mb-3" key={index}>
+                                        <label htmlFor={`option${index}`} className="form-label">Option {index + 1}</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id={`option${index}`}
+                                            placeholder={`Enter option ${index + 1}`}
+                                            value={option}
+                                            onChange={(e) => handleOptionChange(index, e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                ))}
+
+                                <button type="button" className="btn btn-secondary mb-3" onClick={addOption}>
+                                    Add More Option
+                                </button>
+
+                                <div className="d-grid">
+                                    <button type="submit" disabled={pollBtn} className="btn btn-primary">
+                                        Create Poll
+                                    </button>
+                                </div>
                                 </div>
                             </form>
                         </div>

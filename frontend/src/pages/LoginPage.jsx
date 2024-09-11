@@ -48,6 +48,7 @@ const Login = () => {
         localStorage.setItem("refresh", data?.refresh);
         localStorage.setItem("access", data?.access);
         localStorage.setItem("first_name", data?.user?.first_name);
+        localStorage.setItem("user_id", data?.user?.id);
         if (data?.user?.profile_pic) {
           localStorage.setItem("profilepic", data?.user?.profile_pic);
         }
