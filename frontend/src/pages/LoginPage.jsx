@@ -5,7 +5,7 @@ import { loginContext } from "../App";
 const Login = () => {
   const { auth,setAuth,isPicChanged,setIsPicChanged } = useContext(loginContext);
   const navigate = useNavigate();
-  const [formValues, setFormValues] = useState({ email: '', password: '' });
+  const [formValues, setFormValues] = useState({ email: 'guest_user@eventique.com', password: 'Guest@123' });
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -206,6 +206,7 @@ const UpdateProfile = () => {
                                 name="dob"
                                 value={formData.dob ? formatDateToInput(formData.dob) : ''}
                                 onChange={handleInputChange}
+                                required
                             />
                         </div>
                         <div className="mb-3">
@@ -216,6 +217,7 @@ const UpdateProfile = () => {
                                 name="bio"
                                 value={formData?.bio}
                                 onChange={handleInputChange}
+                                required
                             />
                         </div>
                         <div className="mb-3">
@@ -226,6 +228,7 @@ const UpdateProfile = () => {
                                 name="location"
                                 value={formData?.location}
                                 onChange={handleInputChange}
+                                required
                             />
                         </div>
                     </div>

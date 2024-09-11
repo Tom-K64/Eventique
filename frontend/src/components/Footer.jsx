@@ -6,6 +6,8 @@ const Footer = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     newAlert("Successfully Subscribed to NewsLetter","success");
+    setEmail("");
+
   }
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -35,7 +37,7 @@ const Footer = () => {
           {/* Segment 1: Logo and Description */}
           <div className="col-md-4">
             <h5>Eventique</h5>
-            <p>Streamlining event management and discovery for organizers and attendees.</p>
+            <p className='text-justify'>Eventique is a Event Management Website. Organisers can host events and Users can book their favorite event tickets.</p>
           </div>
           <div className="col-md-1"></div>
           {/* Segment 2: Quick Links */}
