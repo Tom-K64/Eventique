@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const MyEvents = () => {
     const navigate = useNavigate();
     const { isLoggedIn, setIsLoggedIn } = useContext(loginContext);
-    const [change,setChange] = useState(true);
+    const [change, setChange] = useState(true);
     const [events, setEvents] = useState([]);
     const [dashboard, setDashboard] = useState({
         total_events: 0,
@@ -46,9 +46,9 @@ const MyEvents = () => {
                         total_events: data.results.length,
                         upcoming_events: data.results.filter(event => new Date(event.start_date) > new Date()).length,
                         total_tickets: data.results.reduce((total, event) => total + event.capacity, 0),
-                        ticket_available : data.results.reduce((total, event) => total + event.available, 0)
+                        ticket_available: data.results.reduce((total, event) => total + event.available, 0)
                     }
-                    setDashboard({...dash,tickets_sold: dash.total_tickets-dash.ticket_available});
+                    setDashboard({ ...dash, tickets_sold: dash.total_tickets - dash.ticket_available });
                 } else if (response.status === 401) {
                     localStorage.clear();
                     newAlert("Auth Token Expired", "warning");
@@ -66,7 +66,11 @@ const MyEvents = () => {
     };
 
     useEffect(() => {
-        getEvents();
+        if (isLoggedIn) {
+            getEvents();
+        } else {
+            navigate("/");
+        }
     }, [change]);
     return (
         <div className="container mt-5 mb-3">

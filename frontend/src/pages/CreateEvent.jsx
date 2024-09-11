@@ -114,7 +114,11 @@ const EventCreation = () => {
     };
 
     useEffect(() => {
-        getCategory();
+        if(isLoggedIn){
+            getCategory();
+        }else{
+            navigate("/");
+        }
     }, []);
     return (
         <>

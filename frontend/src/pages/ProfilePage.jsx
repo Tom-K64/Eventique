@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const Profile = () => {
     const navigate = useNavigate();
-    const { isLoggedIn, setIsLoggedIn,isPicChanged, setIsPicChanged } = useContext(loginContext);
+    const { isLoggedIn, setIsLoggedIn, isPicChanged, setIsPicChanged } = useContext(loginContext);
     const [userData, setUserData] = useState({});
 
     const [showAlert, setShowAlert] = useState(false);
@@ -54,7 +54,11 @@ const Profile = () => {
         }
     };
     useEffect(() => {
-        getData();
+        if (isLoggedIn) {
+            getData();
+        } else {
+            navigate("/");
+        }
     }, []);
 
     return (
@@ -75,7 +79,7 @@ const Profile = () => {
                     {/* Left side: Profile Picture and Username */}
                     <div className="col-md-4 text-center">
                         <img
-                            src={userData?.profile_pic?`${import.meta.env.VITE_BASE_URL}${userData?.profile_pic}`:"https://w7.pngwing.com/pngs/177/551/png-transparent-user-interface-design-computer-icons-default-stephen-salazar-graphy-user-interface-design-computer-wallpaper-sphere-thumbnail.png"}
+                            src={userData?.profile_pic ? `${import.meta.env.VITE_BASE_URL}${userData?.profile_pic}` : "https://w7.pngwing.com/pngs/177/551/png-transparent-user-interface-design-computer-icons-default-stephen-salazar-graphy-user-interface-design-computer-wallpaper-sphere-thumbnail.png"}
                             alt="Profile"
                             className="rounded-circle img-fluid mb-3"
                             style={{ width: '150px', height: '150px', border: '2px solid #ddd' }}

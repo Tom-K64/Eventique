@@ -180,7 +180,6 @@ class WebsiteEventDetailModelActivityUpdateAPIView(views.APIView):
 
     def put(self,request,id):
         try:
-            print(request.data)
             event_instance = EventDetailModel.objects.get(id=id)
             if self.request.user.pk != event_instance.organiser.pk:
                 return Response({"message" : "You are not authorized to update this event"}, status=status.HTTP_400_BAD_REQUEST)

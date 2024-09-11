@@ -35,7 +35,6 @@ class WebsitePollModelCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request_data = self.context['request'].data
-        print(request_data)
         if 'options' not in request_data or len(request_data['options']) <2:
             raise serializers.ValidationError({'message':'At least two options are required'})
         if data['event'].organiser.pk != self.context['request'].user.pk:
@@ -43,7 +42,6 @@ class WebsitePollModelCreateSerializer(serializers.ModelSerializer):
         return data
     
     def create(self, validated_data):
-        print(self.context['request'].data)
         poll_instance = PollModel.objects.create(**validated_data)
         for option in self.context['request'].data['options']:
             opt_instance = OptionModel.objects.create(option=option)

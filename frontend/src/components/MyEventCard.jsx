@@ -109,7 +109,6 @@ const MyEventCard = ({ event, change, setChange }) => {
 
     const handleCreatePoll = async(e) => {
         e.preventDefault();
-        console.log(poll);
         setPollBtn(true);
         newAlert("Poll is being Created !!!","info");
         try {

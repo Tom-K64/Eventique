@@ -1,9 +1,34 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const [email,setEmail] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    newAlert("Successfully Subscribed to NewsLetter","success");
+  }
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const newAlert = (msg, type) => {
+    setAlertType(type);
+    setAlertMessage(msg);
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
+  };
   return (
     <>
+    {showAlert && (
+        <div
+          className={`alert alert-${alertType} position-fixed`}
+          style={{ top: "100px", right: "20px", width: "auto", zIndex: "100" }}
+          role="alert"
+        >
+          {alertMessage}
+        </div>
+      )}
     <footer className="bg-light py-4 mt-4">
       <div className="container">
         <div className="row">
@@ -26,9 +51,9 @@ const Footer = () => {
           {/* Segment 3: Newsletter Signup */}
           <div className="col-md-3">
             <h5>Sign Up for Updates</h5>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <input type="email" className="form-control" placeholder="Enter email" />
+                <input type="email" className="form-control" placeholder="Enter email" value={email} onChange={(e)=>setEmail(e.target.value)} required/>
               </div>
               <button type="submit" className="btn btn-primary">Subscribe</button>
             </form>

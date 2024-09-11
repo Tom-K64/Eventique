@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { loginContext } from "../App";
 
 const Checkout = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isLoggedIn, setIsLoggedIn } = useContext(loginContext);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
@@ -138,7 +140,11 @@ const Checkout = () => {
     };
   };
   useEffect(() => {
-    getEventDetail();
+    if (isLoggedIn) {
+      getEventDetail();
+    } else {
+      navigate("/");
+    }
   }, []);
 
   return (

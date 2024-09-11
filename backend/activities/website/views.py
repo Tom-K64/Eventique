@@ -16,10 +16,8 @@ class WebsitePollModelCreateAPIView(generics.CreateAPIView):
                 serializer.save()
                 return Response({"message" : "Poll Created Successfully"}, status=status.HTTP_200_OK)
             else:
-                print(serializer.errors)
                 return Response({"message" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
         except Exception as e:
-            print(e)
             return Response({"message" : f"something went wrong, {e}"}, status=status.HTTP_400_BAD_REQUEST)
 
 class WebsitePollModelListAPIView(generics.GenericAPIView):
@@ -166,5 +164,4 @@ class WebsitePollModelUpdateAPIView(views.APIView):
                 poll_instance.save()
             return Response({"message" : "Vote Updated Successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
             return Response({"message" : f"Something went wrong: {e}"}, status=status.HTTP_400_BAD_REQUEST)

@@ -124,8 +124,6 @@ const EventDetails = () => {
   // Handle voting
   const handleVote = async(pollId,pollIndex) => {
     const selectedOptionIndex = selectedOptions[pollId];
-    console.log(polls[pollIndex].options[selectedOptionIndex].option);
-    
     if (selectedOptionIndex !== undefined) {
       try {
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/activities/website/api/event-poll-update-api/${pollId}/`,
@@ -148,9 +146,8 @@ const EventDetails = () => {
       } catch (err) {
         newAlert(err.message, "danger");
       };
-      console.log(`Poll ID: ${pollId}, Selected Option: Option ${selectedOptionIndex + 1}`);
-    } else {
-      console.log('No option selected for poll', pollId);
+    }else{
+      newAlert("Please select a valid option to vote", "warning");
     }
   };
 

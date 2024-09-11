@@ -25,16 +25,16 @@ const UpdateEvent = () => {
     ]);
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;        
+        const { name, value } = e.target;
         setEventDetails(prevState => ({ ...prevState, [name]: value }));
     };
     const handleRadioChange = (e) => {
-        const { name, value } = e.target;        
+        const { name, value } = e.target;
         setEventDetails(prevState => ({ ...prevState, [name]: value === 'true' }));
     };
 
     const handlePosterChange = (e) => {
-        setEventDetails(prevState => ({ ...prevState, poster: e.target.files[0],pic_uploaded:true }));
+        setEventDetails(prevState => ({ ...prevState, poster: e.target.files[0], pic_uploaded: true }));
     };
 
     const handleTicketChange = (index, e) => {
@@ -50,7 +50,7 @@ const UpdateEvent = () => {
 
     const handleDeleteTicket = (index) => {
         setTicketTypes(prevTypes => prevTypes.filter((_, i) => i !== index));
-      };
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -95,7 +95,7 @@ const UpdateEvent = () => {
         } catch (e) {
             newAlert(e.message, "danger");
         }
-        
+
     };
 
     const [showAlert, setShowAlert] = useState(false);
@@ -140,7 +140,7 @@ const UpdateEvent = () => {
                 setEventDetails({
                     title: data.title,
                     description: data.description,
-                    poster: data.poster ? `${import.meta.env.VITE_BASE_URL}${data.poster}`:'https://via.placeholder.com/150',
+                    poster: data.poster ? `${import.meta.env.VITE_BASE_URL}${data.poster}` : 'https://via.placeholder.com/150',
                     category: data.category.id,
                     venue: data.venue,
                     location: data.location,
@@ -158,8 +158,12 @@ const UpdateEvent = () => {
     };
 
     useEffect(() => {
-        getCategory();
-        getEventDetail();
+        if (isLoggedIn) {
+            getCategory();
+            getEventDetail();
+        } else {
+            navigate("/");
+        }
     }, []);
 
     return (
