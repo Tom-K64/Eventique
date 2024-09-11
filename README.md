@@ -27,53 +27,53 @@ Eventique is a comprehensive event management platform that simplifies event cre
 
 ### 1. Clone the Repository
 
-\`\`\`bash
+```bash
 git clone https://github.com/Tom-K64/Eventique.git
 cd Eventique
-\`\`\`
+```
 
 ### 2. Backend Setup
 
 1. **Create and activate a virtual environment**:
 
-    \`\`\`bash
+    ```bash
     python -m venv venv
     source venv/bin/activate  # Mac/Linux
     .\venv\Scripts\activate   # Windows
-    \`\`\`
+    ```
 
 2. **Install backend dependencies**:
 
-    \`\`\`bash
+    ```bash
     cd backend
     pip install -r requirements.txt
-    \`\`\`
+    ```
 
 3. **Set up environment variables**:
 
     - Create a \`.env\` file in the \`backend\` folder.
     - Add your email configuration for sending notifications:
 
-      \`\`\`
+      ```
       EMAIL_HOST=smtp.example.com
       EMAIL_PORT=587
       EMAIL_HOST_USER=your-email@example.com
       EMAIL_HOST_PASSWORD=your-email-password
       EMAIL_USE_TLS=True
-      \`\`\`
+      ```
 
 4. **Database Setup**:
 
-    \`\`\`bash
+    ```bash
     python manage.py makemigrations
     python manage.py migrate
-    \`\`\`
+    ```
 
 5. **Run the backend server**:
 
-    \`\`\`bash
+    ```bash
     python manage.py runserver
-    \`\`\`
+    ```
 
 ---
 
@@ -81,30 +81,30 @@ cd Eventique
 
 1. **Navigate to the frontend directory**:
 
-    \`\`\`bash
+    ```bash
     cd frontend
-    \`\`\`
+    ```
 
 2. **Install frontend dependencies**:
 
-    \`\`\`bash
+    ```bash
     npm install
-    \`\`\`
+    ```
 
 3. **Set up environment variables**:
 
     - Create a \`.env\` file inside the \`frontend\` folder.
     - Add the backend base URL:
 
-      \`\`\`bash
+      ```bash
       VITE_BASE_URL=http://localhost:8000
-      \`\`\`
+      ```
 
 4. **Run the development server**:
 
-    \`\`\`bash
+    ```bash
     npm run dev
-    \`\`\`
+    ```
 
 ---
 
@@ -123,7 +123,7 @@ To enable email notifications, configure your email settings in the \`.env\` fil
 
 ## Folder Structure
 
-\`\`\`plaintext
+```plaintext
 Eventique/
 │
 ├── backend/              # Django Backend
@@ -145,7 +145,7 @@ Eventique/
 │   └── package.json      # Node dependencies
 │
 └── README.md             # Project documentation
-\`\`\`
+```
 
 ---
 
