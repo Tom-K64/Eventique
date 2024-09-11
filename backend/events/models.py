@@ -38,6 +38,10 @@ class EventDetailModel(models.Model):
     capacity = models.PositiveIntegerField(null=True, blank=True)
     available = models.PositiveIntegerField(null=True, blank=True)
 
+    qna_is_active = models.BooleanField(default=False)
+    forum_is_active = models.BooleanField(default=False)
+    poll_is_active = models.BooleanField(default=False)
+
     is_active = models.BooleanField(default=True)
     is_private = models.BooleanField(default=True)
     

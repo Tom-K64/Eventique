@@ -118,7 +118,10 @@ class WebsiteEventDetailModelUpdateSerializer(serializers.ModelSerializer):
         instance.start_time = validated_data.get('start_time', instance.start_time)
         instance.end_time = validated_data.get('end_time', instance.end_time)
         instance.is_private = validated_data.get('is_private', instance.is_private)
-        
+        instance.qna_is_active = instance.qna_is_active        
+        instance.forum_is_active = instance.forum_is_active
+        instance.poll_is_active = instance.poll_is_active
+
         instance.ticket_types.all().delete()
         price_range = float(raw_data[f"ticket_types[0][price]"])
         capacity = 0

@@ -174,3 +174,26 @@ class WebsiteEventAttendeeModelEventAttendeeListAPIView(generics.GenericAPIView)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"message" : f"Something went wrong-->{e}"}, status=status.HTTP_400_BAD_REQUEST)
+        
+class WebsiteEventDetailModelActivityUpdateAPIView(views.APIView):
+    permission_classes=[permissions.IsAuthenticated]
+
+    def put(self,request,id):
+        try:
+            print(request.data)
+            event_instance = EventDetailModel.objects.get(id=id)
+            if self.request.user.pk != event_instance.organiser.pk:
+                return Response({"message" : "You are not authorized to update this event"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                event_instance.qna_is_active = request.data.get('qna_is_active',event_instance.qna_is_active)
+                event_instance.forum_is_active = request.data.get('forum_is_active',event_instance.forum_is_active)
+                event_instance.poll_is_active = request.data.get('poll_is_active',event_instance.poll_is_active)
+                event_instance.save()
+                data = {
+                    'qna_is_active': event_instance.qna_is_active,
+                    'forum_is_active': event_instance.forum_is_active,
+                    'poll_is_active': event_instance.poll_is_active,
+                }
+                return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message" : f"Something went wrong: {e}"}, status=status.HTTP_400_BAD_REQUEST)
